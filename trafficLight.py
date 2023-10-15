@@ -107,14 +107,16 @@ vehicleEW_thread.start()
 # drawcanvas
 root = tk.Tk()
 root.title("Traffic Light Simulation")
-canvas = tk.Canvas(root, width=400, height=400, bg="white")
+canvas = tk.Canvas(root, width=600, height=600, bg="white")
 canvas.pack()
 
 def draw_light(x, y):
     return canvas.create_oval(x, y, x+30, y + 30, fill="gray")
 
-straight_light_positions = [(160, 10), (320, 150), (160, 290), (20, 150)]
-left_light_positions = [(120, 10), (280, 150), (120, 290), (-20, 150)]
+straight_light_positions = [(250, 10), (400, 250), (210, 400), (60, 210)]
+left_light_positions = [(210, 10), (400, 210), (250, 400), (60, 250)]
+canvas.create_rectangle(200, 0, 300, 1000, fill="gray", outline="gray") # N-S road
+canvas.create_rectangle(0, 200, 1000, 300, fill="gray", outline="gray") # E-W road
 
 north_straight_light = draw_light(*straight_light_positions[0])
 south_straight_light = draw_light(*straight_light_positions[2])
@@ -125,6 +127,10 @@ north_left_light = draw_light(*left_light_positions[0])
 south_left_light = draw_light(*left_light_positions[2])
 east_left_light = draw_light(*left_light_positions[1])
 west_left_light = draw_light(*left_light_positions[3])
+turnleft_north = canvas.create_text(223, 20, text="←", font=("Arial", 15))
+turnleft_sorth = canvas.create_text(263, 410, text="\u2192", font=("Arial", 15))
+turnleft_east = canvas.create_text(413, 220, text="\u2191", font=("Arial", 15))
+turnleft_west = canvas.create_text(73, 260, text="\u2193", font=("Arial", 15))
 
 update_lights(vehicleNS, vehicleEW)
 root.mainloop()
