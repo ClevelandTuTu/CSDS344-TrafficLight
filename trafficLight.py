@@ -109,7 +109,7 @@ class PedestrianLight:
         self.startLooping()
             
 
-def update_lights(vehicleNS, vehicleEW):
+def update_lights(vehicleNS, vehicleEW, pedestrianNS, pedestrianEW):
     canvas.itemconfig(north_straight_light, fill=vehicleNS.getStraightRight())
     canvas.itemconfig(south_straight_light, fill=vehicleNS.getStraightRight())
     canvas.itemconfig(east_straight_light, fill=vehicleEW.getStraightRight())
@@ -118,6 +118,15 @@ def update_lights(vehicleNS, vehicleEW):
     canvas.itemconfig(south_left_light, fill=vehicleNS.getLeft())
     canvas.itemconfig(east_left_light, fill=vehicleEW.getLeft())
     canvas.itemconfig(west_left_light, fill=vehicleEW.getLeft())
+
+    canvas.itemconfig(StoNlightRight, fill=pedestrianNS.getLight())
+    canvas.itemconfig(NtoSlightRight, fill=pedestrianNS.getLight())
+    canvas.itemconfig(WtoElightDown, fill=pedestrianEW.getLight())
+    canvas.itemconfig(EtoWlightDown, fill=pedestrianEW.getLight())
+    canvas.itemconfig(StoNlightLeft, fill=pedestrianNS.getLight())
+    canvas.itemconfig(NtoSlightLeft, fill=pedestrianNS.getLight())
+    canvas.itemconfig(WtoElightUp, fill=pedestrianEW.getLight())
+    canvas.itemconfig(EtoWlightUp, fill=pedestrianEW.getLight())
     root.after(1000, lambda: update_lights(vehicleNS, vehicleEW))
 
 # start running vehicle lights
@@ -134,17 +143,8 @@ vehicleEW_thread.start()
 pedestrianNS_thread.start()
 pedestrianEW_thread.start()
 
-seconds = 0
-while seconds < 32:
-    print(seconds, ": ")
-    print("Vehicle South North left: ", vehicleNS.getLeft())
-    print("Vehicle South North straight and right: ", vehicleNS.getStraightRight())
-    print("Pedestrian South North: ", pedestrianNS.getLight())
-    print("Vehicle East West left: ", vehicleEW.getLeft())
-    print("Vehicle East West straight and right: ", vehicleEW.getStraightRight())
-    print("Pedestrian East West: ", pedestrianEW.getLight())
-    time.sleep(1)
-    seconds += 1
+
+
 
 # drawcanvas
 root = tk.Tk()
@@ -160,6 +160,15 @@ left_light_positions = [(210, 10), (400, 210), (250, 400), (60, 250)]
 canvas.create_rectangle(200, 0, 300, 1000, fill="gray", outline="gray") # N-S road
 canvas.create_rectangle(0, 200, 1000, 300, fill="gray", outline="gray") # E-W road
 
+StoNlightRight = draw_light(350,310)
+NtoSlightRight = draw_light(350,150)
+WtoElightDown  = draw_light(310,350)
+EtoWlightDown  = draw_light(150,350)
+StoNlightLeft  = draw_light(110,310)
+NtoSlightLeft  = draw_light(110,150)
+WtoElightUp    = draw_light(150,110)
+EtoWlightUp    = draw_light(310,110)
+
 north_straight_light = draw_light(*straight_light_positions[0])
 south_straight_light = draw_light(*straight_light_positions[2])
 east_straight_light = draw_light(*straight_light_positions[1])
@@ -174,6 +183,6 @@ turnleft_sorth = canvas.create_text(263, 410, text="\u2192", font=("Arial", 15))
 turnleft_east = canvas.create_text(413, 220, text="\u2191", font=("Arial", 15))
 turnleft_west = canvas.create_text(73, 260, text="\u2193", font=("Arial", 15))
 
-update_lights(vehicleNS, vehicleEW)
+update_lights(vehicleNS, vehicleEW, pedestrianNS, pedestrianEW)
 root.mainloop()
 
