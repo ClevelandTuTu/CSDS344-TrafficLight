@@ -154,20 +154,22 @@ canvas.pack()
 
 def draw_light(x, y):
     return canvas.create_oval(x, y, x+30, y + 30, fill="gray")
+def draw_pedestrain(x,y):
+    return canvas.create_rectangle(x,y,x+30,y+30,fill='gray')
 
-straight_light_positions = [(250, 10), (400, 250), (210, 400), (60, 210)]
-left_light_positions = [(210, 10), (400, 210), (250, 400), (60, 250)]
+straight_light_positions = [(250, 150), (320, 250), (210, 310), (150, 210)]
+left_light_positions = [(210, 150), (320, 210), (250, 310), (150, 250)]
 canvas.create_rectangle(200, 0, 300, 1000, fill="gray", outline="gray") # N-S road
 canvas.create_rectangle(0, 200, 1000, 300, fill="gray", outline="gray") # E-W road
 
-StoNlightRight = draw_light(350,310)
-NtoSlightRight = draw_light(350,150)
-WtoElightDown  = draw_light(310,350)
-EtoWlightDown  = draw_light(150,350)
-StoNlightLeft  = draw_light(110,310)
-NtoSlightLeft  = draw_light(110,150)
-WtoElightUp    = draw_light(150,110)
-EtoWlightUp    = draw_light(310,110)
+StoNlightRight = draw_pedestrain(350,310)
+NtoSlightRight = draw_pedestrain(350,150)
+WtoElightDown  = draw_pedestrain(310,350)
+EtoWlightDown  = draw_pedestrain(150,350)
+StoNlightLeft  = draw_pedestrain(110,310)
+NtoSlightLeft  = draw_pedestrain(110,150)
+WtoElightUp    = draw_pedestrain(150,110)
+EtoWlightUp    = draw_pedestrain(310,110)
 
 north_straight_light = draw_light(*straight_light_positions[0])
 south_straight_light = draw_light(*straight_light_positions[2])
@@ -178,11 +180,14 @@ north_left_light = draw_light(*left_light_positions[0])
 south_left_light = draw_light(*left_light_positions[2])
 east_left_light = draw_light(*left_light_positions[1])
 west_left_light = draw_light(*left_light_positions[3])
-turnleft_north = canvas.create_text(223, 20, text="←", font=("Arial", 15))
-turnleft_sorth = canvas.create_text(263, 410, text="\u2192", font=("Arial", 15))
-turnleft_east = canvas.create_text(413, 220, text="\u2191", font=("Arial", 15))
-turnleft_west = canvas.create_text(73, 260, text="\u2193", font=("Arial", 15))
-
+turnleft_north = canvas.create_text(223, 160, text="←", font=("Arial", 15))
+turnleft_sorth = canvas.create_text(263, 320, text="\u2192", font=("Arial", 15))
+turnleft_east = canvas.create_text(333, 220, text="\u2191", font=("Arial", 15))
+turnleft_west = canvas.create_text(163, 260, text="\u2193", font=("Arial", 15))
+pedistranRight = canvas.create_rectangle(350,200,380,300,fill="black")
+pedestrianLeft = canvas.create_rectangle(110,200,140,300,fill="black")
+pedestrianUp = canvas.create_rectangle(200, 110, 300, 140, fill = "black")
+pedestrianUp = canvas.create_rectangle(200, 350, 300, 380, fill = "black")
 update_lights(vehicleNS, vehicleEW, pedestrianNS, pedestrianEW)
 root.mainloop()
 
