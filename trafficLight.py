@@ -85,9 +85,26 @@ class PedestrianLight:
     def getLight(self):
         return self.light
 
+def update_lights(vehicleNS, vehicleEW):
+    canvas.itemconfig(north_straight_light, fill=vehicleNS.getStraightRight())
+    canvas.itemconfig(south_straight_light, fill=vehicleNS.getStraightRight())
+    canvas.itemconfig(east_straight_light, fill=vehicleEW.getStraightRight())
+    canvas.itemconfig(west_straight_light, fill=vehicleEW.getStraightRight())
+    canvas.itemconfig(north_left_light, fill=vehicleNS.getLeft())
+    canvas.itemconfig(south_left_light, fill=vehicleNS.getLeft())
+    canvas.itemconfig(east_left_light, fill=vehicleEW.getLeft())
+    canvas.itemconfig(west_left_light, fill=vehicleEW.getLeft())
+    root.after(1000, lambda: update_lights(vehicleNS, vehicleEW))
 
-    
+# start running vehicle lights
+vehicleNS = VehicleLight("red", "red")
+vehicleEW = VehicleLight("red", "red")
+vehicleNS_thread = threading.Thread(target=vehicleNS.startLooping)
+vehicleEW_thread = threading.Thread(target=vehicleEW.delayLooping, args=(14,))
+vehicleNS_thread.start()
+vehicleEW_thread.start()
 
+# drawcanvas
 root = tk.Tk()
 root.title("Traffic Light Simulation")
 canvas = tk.Canvas(root, width=400, height=400, bg="white")
@@ -96,28 +113,19 @@ canvas.pack()
 def draw_light(x, y):
     return canvas.create_oval(x, y, x+30, y + 30, fill="gray")
 
-light_positions = [(150, 10), (310, 150), (150, 290), (10, 150)]
+straight_light_positions = [(160, 10), (320, 150), (160, 290), (20, 150)]
+left_light_positions = [(120, 10), (280, 150), (120, 290), (-20, 150)]
 
-north_light = draw_light(*light_positions[0])
-south_light = draw_light(*light_positions[2])
-east_light = draw_light(*light_positions[1])
-west_light = draw_light(*light_positions[3])
-root.mainloop
+north_straight_light = draw_light(*straight_light_positions[0])
+south_straight_light = draw_light(*straight_light_positions[2])
+east_straight_light = draw_light(*straight_light_positions[1])
+west_straight_light = draw_light(*straight_light_positions[3])
 
-vehicleNS = VehicleLight("red", "red")
-vehicleEW = VehicleLight("red", "red")
-vehicleNS_thread = threading.Thread(target=vehicleNS.startLooping)
-vehicleEW_thread = threading.Thread(target=vehicleEW.delayLooping, args=(14,))
-vehicleNS_thread.start()
-vehicleEW_thread.start()
+north_left_light = draw_light(*left_light_positions[0])
+south_left_light = draw_light(*left_light_positions[2])
+east_left_light = draw_light(*left_light_positions[1])
+west_left_light = draw_light(*left_light_positions[3])
 
+update_lights(vehicleNS, vehicleEW)
+root.mainloop()
 
-seconds = 0
-while seconds < 29:
-    print(seconds, ": ")
-    print("Vehicle South North left: ", vehicleNS.getLeft())
-    print("Vehicle South North straight and right: ", vehicleNS.getStraightRight())
-    print("Vehicle East West left: ", vehicleEW.getLeft())
-    print("Vehicle East West straight and right: ", vehicleEW.getStraightRight())
-    time.sleep(1)
-    seconds += 1
