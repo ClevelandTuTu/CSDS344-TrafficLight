@@ -127,7 +127,7 @@ def update_lights(vehicleNS, vehicleEW, pedestrianNS, pedestrianEW):
     canvas.itemconfig(NtoSlightLeft, fill=pedestrianNS.getLight())
     canvas.itemconfig(WtoElightUp, fill=pedestrianEW.getLight())
     canvas.itemconfig(EtoWlightUp, fill=pedestrianEW.getLight())
-    root.after(1000, lambda: update_lights(vehicleNS, vehicleEW))
+    root.after(1000, lambda: update_lights(vehicleNS, vehicleEW, pedestrianNS, pedestrianEW))
 
 # start running vehicle lights
 vehicleNS = VehicleLight("red", "red")
