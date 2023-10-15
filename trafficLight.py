@@ -63,7 +63,7 @@ class VehicleLight:
             self.leftYellow()
             time.sleep(2)
             self.allRed()
-            time.sleep(14)
+            time.sleep(16)
     
     def delayLooping(self, delay_time):
         time.sleep(delay_time)
@@ -71,19 +71,43 @@ class VehicleLight:
 
 
 class PedestrianLight:
-    def __init__(self):
-        self.light = "red"
+    def __init__(self, light):
+        self.light = light
+        self.working = True
 
     def setLight(self, newLight):
         if newLight == "red":
             self.light = "red"
         elif newLight == "green":
             self.light = "green"
-        elif newLight == "yellow":
-            self.light = "yellow"
+        elif newLight == "orange":
+            self.light = "orange"
     
     def getLight(self):
         return self.light
+    
+    def lightGreen(self):
+        self.setLight("green")
+    
+    def lightOrange(self):
+        self.setLight("orange")
+    
+    def lightRed(self):
+        self.setLight("red")
+
+    def startLooping(self):
+        while self.working:
+            self.lightGreen()
+            time.sleep(4)
+            self.lightOrange()
+            time.sleep(2)
+            self.lightRed()
+            time.sleep(24)
+    
+    def delayLooping(self, delay_time):
+        time.sleep(delay_time)
+        self.startLooping()
+            
 
 def update_lights(vehicleNS, vehicleEW):
     canvas.itemconfig(north_straight_light, fill=vehicleNS.getStraightRight())
@@ -100,9 +124,27 @@ def update_lights(vehicleNS, vehicleEW):
 vehicleNS = VehicleLight("red", "red")
 vehicleEW = VehicleLight("red", "red")
 vehicleNS_thread = threading.Thread(target=vehicleNS.startLooping)
-vehicleEW_thread = threading.Thread(target=vehicleEW.delayLooping, args=(14,))
+vehicleEW_thread = threading.Thread(target=vehicleEW.delayLooping, args=(15,))
+pedestrianNS = PedestrianLight("red")
+pedestrianEW = PedestrianLight("red")
+pedestrianNS_thread = threading.Thread(target=pedestrianNS.startLooping)
+pedestrianEW_thread = threading.Thread(target=pedestrianEW.delayLooping, args=(15,))
 vehicleNS_thread.start()
 vehicleEW_thread.start()
+pedestrianNS_thread.start()
+pedestrianEW_thread.start()
+
+seconds = 0
+while seconds < 32:
+    print(seconds, ": ")
+    print("Vehicle South North left: ", vehicleNS.getLeft())
+    print("Vehicle South North straight and right: ", vehicleNS.getStraightRight())
+    print("Pedestrian South North: ", pedestrianNS.getLight())
+    print("Vehicle East West left: ", vehicleEW.getLeft())
+    print("Vehicle East West straight and right: ", vehicleEW.getStraightRight())
+    print("Pedestrian East West: ", pedestrianEW.getLight())
+    time.sleep(1)
+    seconds += 1
 
 # drawcanvas
 root = tk.Tk()
