@@ -1,81 +1,64 @@
 import tkinter as tk
-from tkinter import Canvas
-import time
 
-class TrafficLight(tk.Tk):
-    def __init__(self):
-        super().__init__()
+def update_lights():
+    colors = ["red", "yellow", "green"]
+    for i, color in enumerate(colors):
+        canvas.itemconfig(north_light[i], fill=color if i == light_state else "gray")
+        canvas.itemconfig(south_light[i], fill=color if i == light_state else "gray")
+        canvas.itemconfig(east_light[i], fill=color if i == east_west_light_state else "gray")
+        canvas.itemconfig(west_light[i], fill=color if i == east_west_light_state else "gray")
+    
+    if light_state == 0 and east_west_light_state == 0:
+        canvas.itemconfig(left_turn_light, fill="green")
+    else:
+        canvas.itemconfig(left_turn_light, fill="gray")
+    
+    root.after(2000, change_lights)
 
-        self.title("Traffic Light Simulation")
-        self.geometry("700x700")
-        
-        self.canvas = Canvas(self, width=700, height=700, bg="grey")
-        self.canvas.pack()
+def change_lights():
+    global light_state, east_west_light_state
+    if light_state == 1: 
+        light_state = 0
+    elif light_state == 0: 
+        if east_west_light_state == 0:  
+            light_state = 2
+    else: 
+        light_state = 1
+    
+    if east_west_light_state == 1: 
+        east_west_light_state = 0
+    elif east_west_light_state == 0:
+        if light_state == 0:
+            east_west_light_state = 2
+    else:
+        east_west_light_state = 1
+    
+    update_lights()
 
-        # [x0, y0, x1, y1] coordinates for the lights with adapted size
-        self.lights = {'N': [280, 100, 420, 240],
-                       'S': [280, 460, 420, 600],
-                       'E': [460, 280, 600, 420],
-                       'W': [100, 280, 240, 420],
-                       'P': [280, 280, 420, 420]}
+root = tk.Tk()
+root.title("Traffic Light Simulation")
+canvas = tk.Canvas(root, width=400, height=400, bg="white")
+canvas.pack()
 
-        # initial state
-        self.state = {'N': 'red', 'S': 'red', 'E': 'red', 'W': 'red', 'P': 'green'}
+def draw_light(x, y):
+    light = []
+    colors = ["red", "yellow", "green"]
+    for i, color in enumerate(colors):
+        light.append(canvas.create_oval(x, y + i*40, x+30, y + i*40 + 30, fill="gray"))
+    return light
 
-        # duration of each light state in seconds
-        self.durations = {'green': 5, 'yellow': 2, 'red': 5, 'walk': 5, 'do_not_walk': 2}
+light_positions = [(150, 10), (310, 150), (150, 290), (10, 150)]
 
-        self.update_lights()
+north_light = draw_light(*light_positions[0])
+south_light = draw_light(*light_positions[2])
+east_light = draw_light(*light_positions[1])
+west_light = draw_light(*light_positions[3])
 
-    def update_lights(self):
-        self.draw_roads()  # Draw roads first
-        for light, coords in self.lights.items():
-            self.canvas.create_oval(coords[0], coords[1], coords[2], coords[3], fill=self.state[light])
-        
-        self.after(1000, self.change_lights)
-        
-    def draw_roads(self):
-        # Draw horizontal road
-        self.canvas.create_rectangle(0, 280, 700, 420, fill='black', outline='black')
-        
-        # Draw vertical road
-        self.canvas.create_rectangle(280, 0, 420, 700, fill='black', outline='black')
-        
-        # Draw dashed lines for pedestrian paths
-        for i in range(7):
-            self.canvas.create_rectangle(280, 280 + i*40, 420, 300 + i*40, fill='white', outline='white')
-            self.canvas.create_rectangle(280 + i*40, 280, 300 + i*40, 420, fill='white', outline='white')
-        
-    def change_lights(self):
-        # Basic logic for changing lights
-        # More comprehensive logic will be required for a real-world application
-        if self.state['N'] == self.state['S'] == 'red' and self.state['E'] == self.state['W'] == 'green':
-            self.state['E'] = self.state['W'] = 'yellow'
-            self.durations['yellow'] -= 1
-            if self.durations['yellow'] == 0:
-                self.state['E'] = self.state['W'] = 'red'
-                self.state['P'] = 'green'
-                self.durations['yellow'] = 2  # reset duration
-        elif self.state['E'] == self.state['W'] == 'red' and self.state['N'] == self.state['S'] == 'green':
-            self.state['N'] = self.state['S'] = 'yellow'
-            self.durations['yellow'] -= 1
-            if self.durations['yellow'] == 0:
-                self.state['N'] = self.state['S'] = 'red'
-                self.state['P'] = 'green'
-                self.durations['yellow'] = 2  # reset duration
-        elif self.state['P'] == 'green':
-            self.durations['walk'] -= 1
-            if self.durations['walk'] == 0:
-                self.state['P'] = 'red'
-                if self.state['N'] == 'red':
-                    self.state['E'] = self.state['W'] = 'green'
-                else:
-                    self.state['N'] = self.state['S'] = 'green'
-                self.durations['walk'] = 5  # reset duration
-        
-        self.canvas.delete("all")
-        self.update_lights()
+# Draw a left-turn light
+left_turn_light = canvas.create_oval(185, 185, 215, 215, fill="gray")
 
+light_state = 0  # 0: red, 1: yellow, 2: green for N/S
+east_west_light_state = 2  # for E/W
+update_lights()
 
-app = TrafficLight()
-app.mainloop()
+root.mainloop()
