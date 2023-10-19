@@ -63,7 +63,7 @@ class VehicleLight:
             self.leftYellow()
             time.sleep(2)
             self.allRed()
-            time.sleep(16)
+            time.sleep(40)
     
     def delayLooping(self, delay_time):
         time.sleep(delay_time)
@@ -97,19 +97,21 @@ class PedestrianLight:
 
     def startLooping(self):
         while self.working:
-            self.lightGreen()
-            time.sleep(4)
-            self.lightOrange()
-            time.sleep(2)
             self.lightRed()
-            time.sleep(24)
+            time.sleep(16)
+            self.lightGreen()
+            time.sleep(6)
+            self.lightOrange()
+            time.sleep(3)
+            self.lightRed()
+            time.sleep(2)
     
     def delayLooping(self, delay_time):
         time.sleep(delay_time)
         self.startLooping()
             
 
-def update_lights(vehicleNS, vehicleEW, pedestrianNS, pedestrianEW):
+def update_lights(vehicleNS, vehicleEW, pedestrianAll):
     canvas.itemconfig(north_straight_light, fill=vehicleNS.getStraightRight())
     canvas.itemconfig(south_straight_light, fill=vehicleNS.getStraightRight())
     canvas.itemconfig(east_straight_light, fill=vehicleEW.getStraightRight())
@@ -119,29 +121,32 @@ def update_lights(vehicleNS, vehicleEW, pedestrianNS, pedestrianEW):
     canvas.itemconfig(east_left_light, fill=vehicleEW.getLeft())
     canvas.itemconfig(west_left_light, fill=vehicleEW.getLeft())
 
-    canvas.itemconfig(StoNlightRight, fill=pedestrianNS.getLight())
-    canvas.itemconfig(NtoSlightRight, fill=pedestrianNS.getLight())
-    canvas.itemconfig(WtoElightDown, fill=pedestrianEW.getLight())
-    canvas.itemconfig(EtoWlightDown, fill=pedestrianEW.getLight())
-    canvas.itemconfig(StoNlightLeft, fill=pedestrianNS.getLight())
-    canvas.itemconfig(NtoSlightLeft, fill=pedestrianNS.getLight())
-    canvas.itemconfig(WtoElightUp, fill=pedestrianEW.getLight())
-    canvas.itemconfig(EtoWlightUp, fill=pedestrianEW.getLight())
-    root.after(1000, lambda: update_lights(vehicleNS, vehicleEW, pedestrianNS, pedestrianEW))
+    canvas.itemconfig(StoNlightRight, fill=pedestrianAll.getLight())
+    canvas.itemconfig(NtoSlightRight, fill=pedestrianAll.getLight())
+    canvas.itemconfig(WtoElightDown, fill=pedestrianAll.getLight())
+    canvas.itemconfig(EtoWlightDown, fill=pedestrianAll.getLight())
+    canvas.itemconfig(StoNlightLeft, fill=pedestrianAll.getLight())
+    canvas.itemconfig(NtoSlightLeft, fill=pedestrianAll.getLight())
+    canvas.itemconfig(WtoElightUp, fill=pedestrianAll.getLight())
+    canvas.itemconfig(EtoWlightUp, fill=pedestrianAll.getLight())
+    root.after(1000, lambda: update_lights(vehicleNS, vehicleEW, pedestrianAll))
 
 # start running vehicle lights
 vehicleNS = VehicleLight("red", "red")
 vehicleEW = VehicleLight("red", "red")
 vehicleNS_thread = threading.Thread(target=vehicleNS.startLooping)
-vehicleEW_thread = threading.Thread(target=vehicleEW.delayLooping, args=(15,))
-pedestrianNS = PedestrianLight("red")
-pedestrianEW = PedestrianLight("red")
-pedestrianNS_thread = threading.Thread(target=pedestrianNS.startLooping)
-pedestrianEW_thread = threading.Thread(target=pedestrianEW.delayLooping, args=(15,))
+vehicleEW_thread = threading.Thread(target=vehicleEW.delayLooping, args=(27,))
+pedestrianAll = PedestrianLight("red")
+#pedestrianNS = PedestrianLight("red")
+#pedestrianEW = PedestrianLight("red")
+pedestrianAll_thread = threading.Thread(target=pedestrianAll.startLooping)
+#pedestrianNS_thread = threading.Thread(target=pedestrianNS.startLooping)
+#pedestrianEW_thread = threading.Thread(target=pedestrianEW.delayLooping, args=(15,))
 vehicleNS_thread.start()
 vehicleEW_thread.start()
-pedestrianNS_thread.start()
-pedestrianEW_thread.start()
+pedestrianAll_thread.start()
+#pedestrianNS_thread.start()
+#pedestrianEW_thread.start()
 
 
 
@@ -188,6 +193,13 @@ pedistranRight = canvas.create_rectangle(350,200,380,300,fill="black")
 pedestrianLeft = canvas.create_rectangle(110,200,140,300,fill="black")
 pedestrianUp = canvas.create_rectangle(200, 110, 300, 140, fill = "black")
 pedestrianUp = canvas.create_rectangle(200, 350, 300, 380, fill = "black")
-update_lights(vehicleNS, vehicleEW, pedestrianNS, pedestrianEW)
+update_lights(vehicleNS, vehicleEW, pedestrianAll)
 root.mainloop()
 
+vehicleNS.working = False
+vehicleEW.working = False
+pedestrianAll.working = False
+
+vehicleNS_thread.join()
+vehicleEW_thread.join()
+pedestrianAll_thread.join()
