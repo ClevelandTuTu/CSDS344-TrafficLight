@@ -79,16 +79,22 @@ class VehicleLight:
     def updateCanvasImage(self, leftPhoto, straightRightPhoto, index):
         if self.getLeft() == "green":
             image1 = Image.open(leftPhoto)
-            image1 = image1.resize((10, 10))
-            image2 = image1
+            image1 = image1.resize((20, 20))
+            image2 = image1.rotate(180)
+            if index == 2:
+                image1 =image1.rotate(90)
+                image2 =image2.rotate(90)
             img1 = ImageTk.PhotoImage(image1)
             img2 = ImageTk.PhotoImage(image2)
             self.canvas.create_image(self.leftSignP1[0], self.leftSignP1[1], image=img1)
             self.canvas.create_image(self.leftSignP2[0], self.leftSignP2[1], image=img2)
         elif self.getStraightRight() == "green":
             image1 = Image.open(straightRightPhoto)
-            image1 = image1.resize((10, 10))
-            image2 = image1
+            image1 = image1.resize((20, 20))
+            image2 = image1.rotate(180)
+            if index == 2:
+                image1 =image1.rotate(90)
+                image2 =image2.rotate(90)
             img1 = ImageTk.PhotoImage(image1)
             img2 = ImageTk.PhotoImage(image2)
             self.canvas.create_image(self.straightRSignP1[0], self.straightRSignP1[1], image=img1)
@@ -165,8 +171,8 @@ def update_lights(vehicleNS, vehicleEW, pedestrianAll):
     canvas.itemconfig(WtoElightUp, fill=pedestrianAll.getLight())
     canvas.itemconfig(EtoWlightUp, fill=pedestrianAll.getLight())
     
-    vehicleNS.updateCanvasImage("turnLeft.png", "turnRight.png", 1)  # update image
-    vehicleEW.updateCanvasImage("turnLeft.png", "turnRight.png", 2)  # update image
+    vehicleNS.updateCanvasImage("turnleft.png", "turnrightandstraight.png", 1)  # update image
+    vehicleEW.updateCanvasImage("turnleft.png", "turnrightandstraight.png", 2)  # update image
     
     root.after(1000, lambda: update_lights(vehicleNS, vehicleEW, pedestrianAll))
 
@@ -198,8 +204,8 @@ root.title("Traffic Light Simulation")
 canvas = tk.Canvas(root, width=600, height=600, bg="white")
 canvas.pack()
 
-vehicleNS.setCanvas(canvas, (250,300), (250,200), (250,300), (250,200))  # set canvas
-vehicleEW.setCanvas(canvas, (200,300), (200,200), (200,300), (200,200))  # set canvas
+vehicleNS.setCanvas(canvas, (270,290), (230,200), (270,290), (230,200))  # set canvas
+vehicleEW.setCanvas(canvas, (300,230), (200,270), (300,230), (200,270))  # set canvas
 #image = Image.open("turnLeft.png")
 #image = image.resize((10,10))
 #img= ImageTk.PhotoImage(image)
