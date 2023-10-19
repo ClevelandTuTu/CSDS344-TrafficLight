@@ -1,7 +1,7 @@
 import time
 import threading
 import tkinter as tk
-
+from PIL import Image,ImageTk
 class VehicleLight:
     def __init__(self, left, straightRight):
         self.left = left
@@ -129,6 +129,17 @@ def update_lights(vehicleNS, vehicleEW, pedestrianAll):
     canvas.itemconfig(NtoSlightLeft, fill=pedestrianAll.getLight())
     canvas.itemconfig(WtoElightUp, fill=pedestrianAll.getLight())
     canvas.itemconfig(EtoWlightUp, fill=pedestrianAll.getLight())
+    
+    if vehicleNS.getLeft() == "green": 
+        image1 = Image.open("turnLeft.png")
+        image1 = image1.resize((10,10))
+    else :
+        image1 = Image.open("turnright.png")
+        image1 = image1.resize((10,10))
+    img= ImageTk.PhotoImage(image1)
+    canvas.create_image(10, 13, image=img)
+    
+
     root.after(1000, lambda: update_lights(vehicleNS, vehicleEW, pedestrianAll))
 
 # start running vehicle lights
@@ -156,7 +167,9 @@ root = tk.Tk()
 root.title("Traffic Light Simulation")
 canvas = tk.Canvas(root, width=600, height=600, bg="white")
 canvas.pack()
-
+#image = Image.open("turnLeft.png")
+#image = image.resize((10,10))
+#img= ImageTk.PhotoImage(image)
 def draw_light(x, y):
     return canvas.create_oval(x, y, x+30, y + 30, fill="gray")
 def draw_pedestrain(x,y):
@@ -193,6 +206,7 @@ pedistranRight = canvas.create_rectangle(350,200,380,300,fill="black")
 pedestrianLeft = canvas.create_rectangle(110,200,140,300,fill="black")
 pedestrianUp = canvas.create_rectangle(200, 110, 300, 140, fill = "black")
 pedestrianUp = canvas.create_rectangle(200, 350, 300, 380, fill = "black")
+#canvas.create_image(10, 13, image=img)
 update_lights(vehicleNS, vehicleEW, pedestrianAll)
 root.mainloop()
 
