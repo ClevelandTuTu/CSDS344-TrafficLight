@@ -7,6 +7,13 @@ class VehicleLight:
         self.left = left
         self.straightRight = straightRight
         self.working = True
+    
+    def setCanvas(self, canvas, leftSignP1, leftSignP2, straightRSignP1, straightRSignP2):
+        self.canvas = canvas
+        self.leftSignP1 = leftSignP1
+        self.leftSignP2 = leftSignP2
+        self.straightRSignP1 = straightRSignP1
+        self.straightRSignP2 = straightRSignP2
 
     def setLeft(self, newLight):
         if newLight == "red":
@@ -68,6 +75,34 @@ class VehicleLight:
     def delayLooping(self, delay_time):
         time.sleep(delay_time)
         self.startLooping()
+    
+    def updateCanvasImage(self, leftPhoto, straightRightPhoto, index):
+        if self.getLeft() == "green":
+            image1 = Image.open(leftPhoto)
+            image1 = image1.resize((10, 10))
+            image2 = image1
+            img1 = ImageTk.PhotoImage(image1)
+            img2 = ImageTk.PhotoImage(image2)
+            self.canvas.create_image(self.leftSignP1[0], self.leftSignP1[1], image=img1)
+            self.canvas.create_image(self.leftSignP2[0], self.leftSignP2[1], image=img2)
+        elif self.getStraightRight() == "green":
+            image1 = Image.open(straightRightPhoto)
+            image1 = image1.resize((10, 10))
+            image2 = image1
+            img1 = ImageTk.PhotoImage(image1)
+            img2 = ImageTk.PhotoImage(image2)
+            self.canvas.create_image(self.straightRSignP1[0], self.straightRSignP1[1], image=img1)
+            self.canvas.create_image(self.straightRSignP2[0], self.straightRSignP2[1], image=img2)
+        else:
+            img1 = None
+            img2 = None
+        
+        if index == 1:
+            self.canvas.img1 = img1  # 保存图像对象的引用
+            self.canvas.img2 = img2  # 保存图像对象的引用
+        else:
+            self.canvas.img3 = img1  # 保存图像对象的引用
+            self.canvas.img4 = img2  # 保存图像对象的引用
 
 
 class PedestrianLight:
@@ -130,17 +165,12 @@ def update_lights(vehicleNS, vehicleEW, pedestrianAll):
     canvas.itemconfig(WtoElightUp, fill=pedestrianAll.getLight())
     canvas.itemconfig(EtoWlightUp, fill=pedestrianAll.getLight())
     
-    if vehicleNS.getLeft() == "green": 
-        image1 = Image.open("turnLeft.png")
-        image1 = image1.resize((10,10))
-    else :
-        image1 = Image.open("turnright.png")
-        image1 = image1.resize((10,10))
-    img= ImageTk.PhotoImage(image1)
-    canvas.create_image(10, 13, image=img)
+    vehicleNS.updateCanvasImage("turnLeft.png", "turnRight.png", 1)  # update image
+    vehicleEW.updateCanvasImage("turnLeft.png", "turnRight.png", 2)  # update image
     
-
     root.after(1000, lambda: update_lights(vehicleNS, vehicleEW, pedestrianAll))
+
+
 
 # start running vehicle lights
 vehicleNS = VehicleLight("red", "red")
@@ -167,6 +197,9 @@ root = tk.Tk()
 root.title("Traffic Light Simulation")
 canvas = tk.Canvas(root, width=600, height=600, bg="white")
 canvas.pack()
+
+vehicleNS.setCanvas(canvas, (250,300), (250,200), (250,300), (250,200))  # set canvas
+vehicleEW.setCanvas(canvas, (200,300), (200,200), (200,300), (200,200))  # set canvas
 #image = Image.open("turnLeft.png")
 #image = image.resize((10,10))
 #img= ImageTk.PhotoImage(image)
